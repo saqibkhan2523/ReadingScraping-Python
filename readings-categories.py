@@ -6,8 +6,8 @@ import re
 
 
 def build_connection():
-    connection = psycopg2.connect(user="books_admin", password="saqib123",
-                                  host="127.0.0.1", port="5432", database="books")
+    connection = psycopg2.connect(user="", password="",
+                                  host="127.0.0.1", port="", database="")
     print("Database connected")
     return connection
 
@@ -24,13 +24,6 @@ def get_all_record(table_name, cursor):
 
     cursor.execute(postgreSQL_select_Query)
     records = cursor.fetchall()
-
-    # print("Print each row and it's columns values")
-    # for row in records:
-    #     print("Id = ", row[0], "\n")
-    #     print("name = ", row[1], "\n")
-    #     print("url  = ", row[2], "\n")
-    #     print("total_books  = ", row[3], "\n\n")
 
     return records
 
@@ -67,7 +60,6 @@ def scrap_all_categories(url, cursor, connection):
     for a in li:
         temp = break_string(a.get_text(), '[')
         print(index, temp[0], url + a.find('a').get('href', ''), temp[1][:-1])
-        # insert_category_record(index, temp[0], url + a.find('a').get('href', ''), temp[1][:-1], cursor)
         index += 1
     connection.commit()
 
@@ -135,7 +127,6 @@ def get_each_book_on_page(url, site_url, cursor, connection):
             insert_book_record(name.strip(), url_book.strip(), price.strip(), availability, publisher.strip(),
                                cover.strip(), pages.strip(), isbn.strip(), author.strip(), cursor)
             connection.commit()
-            print('================')
 
 
 def scrap_all_books(categories, site_url, cursor, connection):
@@ -153,12 +144,10 @@ def scrap_all_books(categories, site_url, cursor, connection):
                     print("LOOP", x)
                     # print(category[2] + '&Page=' + str(x))'
                     print(category[2] + '&Page=' + str(x))
-                    #get_each_book_on_page(category[2] + '&Page=' + str(x), site_url, cursor, connection)
                     x += 1
 
             else:  # For categories having less then 11 books.
                 print("")
-                #get_each_book_on_page(category[2], site_url, cursor, connection)
 
 
 def main():
@@ -166,6 +155,7 @@ def main():
     cursor = connection.cursor()
     url = 'https://www.readings.com.pk'
     '''Already added the categories in database. running again might cause crash.'''
+    #If categories doesnot exist in data base.
     #scrap_all_categories(url, cursor, connection)
 
     categories = get_all_record('category', cursor)
